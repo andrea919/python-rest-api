@@ -102,5 +102,8 @@ def create_app(db_url=None):
                 "error": "authorization_required",
             }
         ), 401
+    
+    with app.app_context():
+        db.create_all()
 
     return app

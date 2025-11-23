@@ -46,7 +46,8 @@ def create_app(db_url=None):
     
     # JWT Configuration
     # Set your JWT secret key here or load it from an environment variable
-    app.config["JWT_SECRET_KEY"] = ""
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+
     jwt = JWTManager(app)
 
     #  JWT callbacks...

@@ -16,9 +16,28 @@ More updates will be added over time, including a simple frontend.
 
 ---
 
-## ▶️ Quick Start
+## Quick Start
 
 ```bash
+git clone <your-repo-url>
+cd PythonApi
 pip install -r requirements.txt
+cp .env.example .env
+# Edit .env with your settings (see Environment Setup below)
 flask db upgrade
 flask run
+
+---
+
+## Environment Setup
+
+**Before running the application, you must set up your environment variables:**
+
+1. **Copy the environment template:**
+   ```bash
+   cp .env.example .env
+2. **Edit the .env file with your configuration:**
+    DATABASE_URL=sqlite:///data.db
+    SECRET_KEY=your-secret-key-here
+    JWT_SECRET_KEY=your-jwt-secret-key-here
+    FLASK_ENV=development

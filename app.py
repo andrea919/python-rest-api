@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
+from dotenv import dotenv_values
 
 from db import db
 
@@ -23,6 +24,10 @@ from resources.user import blp as UserBluePrint
 def create_app(db_url=None):
     app = Flask(__name__)
 
+    config = dotenv_values(".env")
+    database_url = config.get("DATABASE_URL")
+    
+    # Usa le variabili da dotenv
     app.config["PROPAGATE_EXCEPTIONS"] = True
     app.config["API_TITLE"] = "Stores REST API"
     app.config["API_VERSION"] = "v1"
@@ -30,7 +35,7 @@ def create_app(db_url=None):
     app.config["OPENAPI_URL_PREFIX"] = "/"
     app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
     app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-    app.config["SQLALCHEMY_DATABASE_URI"] = db_url or os.getenv("DATABASE_URL", "sqlite:///data.db")
+    app.config["SQLALCHEMY_DATABASE_URI"] = database_url or "sqlite:///data.db"    
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
     # Initialize extensions
@@ -46,7 +51,7 @@ def create_app(db_url=None):
     
     # JWT Configuration
     # Set your JWT secret key here or load it from an environment variable
-    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
+    app.config["JWT_SECRET_KEY"] = config.get("JWT_SECRET_KEY") or "super-secret"
 
     jwt = JWTManager(app)
 

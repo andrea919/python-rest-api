@@ -4,7 +4,7 @@ from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 from flask_migrate import Migrate
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 
 from db import db
 
@@ -23,9 +23,10 @@ from resources.user import blp as UserBluePrint
 
 def create_app(db_url=None):
     app = Flask(__name__)
+    load_dotenv()
 
-    config = dotenv_values(".env")
-    database_url = config.get("DATABASE_URL")
+    database_url = os.getenv("DATABASE_URL")
+
     
     # Usa le variabili da dotenv
     app.config["PROPAGATE_EXCEPTIONS"] = True
@@ -51,7 +52,7 @@ def create_app(db_url=None):
     
     # JWT Configuration
     # Set your JWT secret key here or load it from an environment variable
-    app.config["JWT_SECRET_KEY"] = config.get("JWT_SECRET_KEY") or "super-secret"
+    app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY", "super-secret")
 
     jwt = JWTManager(app)
 
@@ -109,7 +110,8 @@ def create_app(db_url=None):
             }
         ), 401
     
-    with app.app_context():
-        db.create_all()
+    # Added health check
+    # with app.app_context():
+    #    db.create_all()
 
     return app

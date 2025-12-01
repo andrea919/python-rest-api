@@ -24,7 +24,6 @@ cd PythonApi
 pip install -r requirements.txt
 cp .env.example .env
 # Edit .env with your settings (see Environment Setup below)
-flask db upgrade
 flask run
 
 ---
@@ -39,5 +38,3 @@ flask run
 2. **Edit the .env file with your configuration:**
     DATABASE_URL=sqlite:///data.db
     SECRET_KEY=your-secret-key-here
-    JWT_SECRET_KEY=your-jwt-secret-key-here
-    FLASK_ENV=development

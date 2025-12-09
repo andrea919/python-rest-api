@@ -2,25 +2,32 @@ from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from passlib.hash import pbkdf2_sha256
 from flask_jwt_extended import create_access_token, create_refresh_token, get_jwt_identity, jwt_required, get_jwt
+from sqlalchemy import or_
 
 from db import db
 from blocklist import BLOCKLIST
 from models import UserModel, RevokedToken
-from schemas import UserSchema
+from schemas import UserSchema, UserRegisterSchema
 
 blp = Blueprint("Users", "users", description="Operations on users")
 
 @blp.route("/register")
 class UserRegister(MethodView):
-    @blp.arguments(UserSchema)  # fixed: plural 'arguments'
+    @blp.arguments(UserRegisterSchema)  # fixed: plural 'arguments'
     def post(self, user_data):
         # Check if username already exists
-        if UserModel.query.filter(UserModel.username == user_data["username"]).first():
-            abort(409, message="A user with that username already exists.")
+        if UserModel.query.filter(
+            or_(
+                UserModel.username == user_data["username"], 
+                UserModel.email == user_data["email"]
+                )
+            ).first():
+                abort(409, message="A user with that username or email already exists.")
 
         # Create new user
         user = UserModel(
             username=user_data["username"],
+            email=user_data["email"],
             password=pbkdf2_sha256.hash(user_data["password"])
         )
 

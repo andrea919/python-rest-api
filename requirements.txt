@@ -9,4 +9,4 @@ passlib
 flask-migrate
 gunicorn
 psycopg2
-supabase
+requests

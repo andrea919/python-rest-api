@@ -8,6 +8,7 @@ services:
     #  - .:/app
     depends_on:
       - db
+      - redis
     develop:
       watch:
         - action: sync
@@ -23,7 +24,7 @@ services:
         - action: rebuild
           path: Dockerfile
     env_file:
-      - ./.env
+      - .env
   db:
     image: postgres:15
     environment:
@@ -42,6 +43,18 @@ services:
       - "5432:5432"
     
     restart: unless-stopped
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  worker:
+    build: .
+    depends_on:
+      - redis
+    env_file:
+      - .env
+    command: sh -c "rq worker -u $REDIS_URL emails"
 
 volumes:
   postgres_data:
